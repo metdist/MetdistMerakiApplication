@@ -153,16 +153,67 @@ def main():
             selected_network_name = st.sidebar.selectbox("Select Network", [network['name'] for network in networks])
             selected_network_id = next(network['id'] for network in networks if network['name'] == selected_network_name)
 
-            devices = dashboard.networks.getNetworkDevices(selected_network_id)
-            device_data = [{"Device Name": dev.get('name', 'N/A'), "MAC": dev.get('mac', 'N/A'), "Serial": dev.get('serial', 'N/A'), "Status": dev.get('status', 'N/A')} for dev in devices]
+            all_devices = dashboard.organizations.getOrganizationDevicesStatuses(org_id)
 
-            if device_data:
-                device_df = pd.DataFrame(device_data)
-                styled_device_df = device_df.style.applymap(color_status, subset=["Status"])
-                st.subheader(f"Devices in Network: {selected_network_name}")
-                st.dataframe(styled_device_df, use_container_width=True)
+            devices = dashboard.networks.getNetworkDevices(selected_network_id)
+            # device_data = [{"Device Name": dev.get('name', 'N/A'), "MAC": dev.get('mac', 'N/A'), "Serial": dev.get('serial', 'N/A'), "Status": dev.get('status', 'N/A')} for dev in devices]
+
+            devices_df = pd.DataFrame(all_devices)
+
+            # CSS for centering the container
+            st.markdown(
+                """
+                <style>
+                .centered-container {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding-top: 2rem;
+                }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
+
+            # Retrieve the `networkId` corresponding to the selected network name
+            selected_network_id = next((network['id'] for network in networks if network['name'] == selected_network_name), None)
+
+            # Fetch all devices' statuses
+            try:
+                all_devices = dashboard.organizations.getOrganizationDevicesStatuses(org_id)
+            except Exception as e:
+                st.error(f"Error fetching device statuses: {e}")
+                all_devices = []
+
+            # Ensure all_devices has data before proceeding
+            if all_devices:
+                # Convert the list of devices to a pandas DataFrame
+                devices_df = pd.DataFrame(all_devices)
+
+
+            # Function to apply colors based on device status
+        def coloured_status(value):
+            if value == "online":
+                color = 'background-color: green; color: white;'
+            elif value == "dormant":
+                color = 'background-color: orange; color: white;'
             else:
-                st.warning("No devices found in the selected network.")
+                color = 'background-color: red; color: white;'
+            return color
+
+
+        for network_id, devices in devices_df.groupby('networkId'):
+            if network_id == selected_network_id:
+                st.markdown('<div class="centered-container">', unsafe_allow_html=True)  # Start centered div
+                st.subheader(f"Devices in {selected_network_name} Network")
+
+                # Apply colored status formatting
+                styled_devices = devices[['name', 'mac', 'status']].style.applymap(coloured_status, subset=['status'])
+
+                # Display the styled DataFrame in the center
+                st.write(styled_devices.to_html(escape=False), unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)  # End centered div
+
 
     # Countdown timer for the next refresh if logged in
     if st.session_state['logged_in']:
