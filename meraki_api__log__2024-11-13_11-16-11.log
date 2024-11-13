@@ -1918,3 +1918,85 @@
 2024-11-13 12:01:31       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
 2024-11-13 12:01:31       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
 2024-11-13 12:01:32       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:03:32       meraki:    DEBUG > {'tags': ['organizations', 'configure'], 'operation': 'getOrganizations', 'page': 1}
+2024-11-13 12:03:32       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations
+2024-11-13 12:03:32       meraki:     INFO > organizations, getOrganizations; page 1 - 200 OK
+2024-11-13 12:03:32       meraki:    DEBUG > {'tags': ['organizations', 'configure', 'networks'], 'operation': 'getOrganizationNetworks', 'page': 1}
+2024-11-13 12:03:32       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/networks
+2024-11-13 12:03:32       meraki:     INFO > organizations, getOrganizationNetworks; page 1 - 200 OK
+2024-11-13 12:03:32       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'uplinks', 'statuses'], 'operation': 'getOrganizationApplianceUplinkStatuses', 'page': 1}
+2024-11-13 12:03:32       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/uplink/statuses
+2024-11-13 12:03:33       meraki:     INFO > appliance, getOrganizationApplianceUplinkStatuses; page 1 - 200 OK
+2024-11-13 12:03:33       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
+2024-11-13 12:03:33       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
+2024-11-13 12:03:33       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:03:33       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'uplinks', 'statuses'], 'operation': 'getOrganizationApplianceUplinkStatuses', 'page': 1}
+2024-11-13 12:03:33       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/uplink/statuses
+2024-11-13 12:03:34       meraki:     INFO > appliance, getOrganizationApplianceUplinkStatuses; page 1 - 200 OK
+2024-11-13 12:03:34       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
+2024-11-13 12:03:34       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
+2024-11-13 12:03:35       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:03:35       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'uplinks', 'statuses'], 'operation': 'getOrganizationApplianceUplinkStatuses', 'page': 1}
+2024-11-13 12:03:35       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/uplink/statuses
+2024-11-13 12:03:35       meraki:     INFO > appliance, getOrganizationApplianceUplinkStatuses; page 1 - 200 OK
+2024-11-13 12:03:35       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
+2024-11-13 12:03:35       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
+2024-11-13 12:03:36       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:03:36       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'uplinks', 'statuses'], 'operation': 'getOrganizationApplianceUplinkStatuses', 'page': 1}
+2024-11-13 12:03:36       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/uplink/statuses
+2024-11-13 12:03:36       meraki:     INFO > appliance, getOrganizationApplianceUplinkStatuses; page 1 - 200 OK
+2024-11-13 12:03:36       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
+2024-11-13 12:03:36       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
+2024-11-13 12:03:37       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:03:37       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'uplinks', 'statuses'], 'operation': 'getOrganizationApplianceUplinkStatuses', 'page': 1}
+2024-11-13 12:03:37       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/uplink/statuses
+2024-11-13 12:03:37       meraki:     INFO > appliance, getOrganizationApplianceUplinkStatuses; page 1 - 200 OK
+2024-11-13 12:03:37       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
+2024-11-13 12:03:37       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
+2024-11-13 12:03:38       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:03:38       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'uplinks', 'statuses'], 'operation': 'getOrganizationApplianceUplinkStatuses', 'page': 1}
+2024-11-13 12:03:38       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/uplink/statuses
+2024-11-13 12:03:38       meraki:     INFO > appliance, getOrganizationApplianceUplinkStatuses; page 1 - 200 OK
+2024-11-13 12:03:38       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
+2024-11-13 12:03:38       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
+2024-11-13 12:03:39       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:03:39       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'uplinks', 'statuses'], 'operation': 'getOrganizationApplianceUplinkStatuses', 'page': 1}
+2024-11-13 12:03:39       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/uplink/statuses
+2024-11-13 12:03:39       meraki:     INFO > appliance, getOrganizationApplianceUplinkStatuses; page 1 - 200 OK
+2024-11-13 12:03:39       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
+2024-11-13 12:03:39       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
+2024-11-13 12:03:40       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:03:40       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'uplinks', 'statuses'], 'operation': 'getOrganizationApplianceUplinkStatuses', 'page': 1}
+2024-11-13 12:03:40       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/uplink/statuses
+2024-11-13 12:03:41       meraki:     INFO > appliance, getOrganizationApplianceUplinkStatuses; page 1 - 200 OK
+2024-11-13 12:03:41       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
+2024-11-13 12:03:41       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
+2024-11-13 12:03:41       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:03:41       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'uplinks', 'statuses'], 'operation': 'getOrganizationApplianceUplinkStatuses', 'page': 1}
+2024-11-13 12:03:41       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/uplink/statuses
+2024-11-13 12:03:42       meraki:     INFO > appliance, getOrganizationApplianceUplinkStatuses; page 1 - 200 OK
+2024-11-13 12:03:42       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
+2024-11-13 12:03:42       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
+2024-11-13 12:03:43       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:03:43       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'uplinks', 'statuses'], 'operation': 'getOrganizationApplianceUplinkStatuses', 'page': 1}
+2024-11-13 12:03:43       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/uplink/statuses
+2024-11-13 12:03:43       meraki:     INFO > appliance, getOrganizationApplianceUplinkStatuses; page 1 - 200 OK
+2024-11-13 12:03:43       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
+2024-11-13 12:03:43       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
+2024-11-13 12:03:44       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:03:44       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'uplinks', 'statuses'], 'operation': 'getOrganizationApplianceUplinkStatuses', 'page': 1}
+2024-11-13 12:03:44       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/uplink/statuses
+2024-11-13 12:03:44       meraki:     INFO > appliance, getOrganizationApplianceUplinkStatuses; page 1 - 200 OK
+2024-11-13 12:03:44       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
+2024-11-13 12:03:44       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
+2024-11-13 12:03:45       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:03:45       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'uplinks', 'statuses'], 'operation': 'getOrganizationApplianceUplinkStatuses', 'page': 1}
+2024-11-13 12:03:45       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/uplink/statuses
+2024-11-13 12:03:46       meraki:     INFO > appliance, getOrganizationApplianceUplinkStatuses; page 1 - 200 OK
+2024-11-13 12:03:46       meraki:    DEBUG > {'tags': ['appliance', 'monitor', 'vpn', 'statuses'], 'operation': 'getOrganizationApplianceVpnStatuses', 'page': 1}
+2024-11-13 12:03:46       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations/875345/appliance/vpn/statuses
+2024-11-13 12:03:46       meraki:     INFO > appliance, getOrganizationApplianceVpnStatuses; page 1 - 200 OK
+2024-11-13 12:05:46       meraki:    DEBUG > {'tags': ['organizations', 'configure'], 'operation': 'getOrganizations', 'page': 1}
+2024-11-13 12:05:46       meraki:     INFO > GET https://api.meraki.com/api/v1/organizations
+2024-11-13 12:05:47       meraki:    ERROR > organizations, getOrganizations - 401 Unauthorized, {'errors': ['Invalid API key']}
+csac
