@@ -50,7 +50,7 @@ st.markdown(
 def color_status(val):
     color = (
         'background-color: green; color: white;'
-        if val.startswith("active") and val != "active, not connected" and val!="active, failed" or val == "online"
+        if val.startswith("active") and (val != "active, not connected" or val!="active, failed") or val == "online"
         else 'background-color: red; color: white;'
     )
     return color
