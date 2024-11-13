@@ -4,27 +4,43 @@ import pandas as pd
 from meraki import DashboardAPI
 from meraki.exceptions import APIKeyError, APIError
 
-# Set the page to use the full width and a dark theme to resemble a dashboard look
+# Set the page to use the full width and a dark theme
 st.set_page_config(page_title="Meraki Dashboard", page_icon="🌐", layout="wide")
 
 # Define a refresh interval in seconds (5 minutes)
 REFRESH_INTERVAL = 2 * 60  # 5 minutes in seconds
 
-# Custom CSS to style the dashboard similar to Meraki
+# Custom CSS to style the dashboard with a black background and green/yellow accents
 st.markdown(
     """
     <style>
-    .reportview-container .main .block-container{
+    /* Apply a black background color and white text for the main container */
+    .reportview-container {
+        background-color: #000000;
+    }
+    .main .block-container {
+        background-color: #000000;
+        color: #ffffff;
         padding-top: 2rem;
-        padding-right: 2rem;
+        padding-right: 2rem;  
         padding-left: 2rem;
     }
+    /* Sidebar styling */
     .css-1aumxhk {
         background-color: #1f1f2e;
-        color: white;
+        color: #cddc39;  /* Light green text color for the sidebar */
     }
-    .css-15zrgzn { color: #cddc39; }
-    .css-1d391kg { background-color: #1f1f2e; }
+    /* General text color */
+    .css-10trblm {  /* Main text color */
+        color: #ffffff;
+    }
+    .css-15zrgzn {  /* Title and header color */
+        color: #cddc39;
+    }
+    /* Dataframe styling for color-coding status */
+    .css-1d391kg {
+        background-color: #1f1f2e;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -32,7 +48,11 @@ st.markdown(
 
 # Function to apply colors to the status cells based on value
 def color_status(val):
-    color = 'background-color: green; color: white;' if val.startswith("active") and val!="active, not connected" or val == "online" else 'background-color: red; color: white;'
+    color = (
+        'background-color: green; color: white;'
+        if val.startswith("active") and (val != "active, not connected" or val!="active, failed") or val == "online"
+        else 'background-color: red; color: white;'
+    )
     return color
 
 def main():
@@ -118,7 +138,6 @@ def main():
 
                     network_data.append({
                         "Network Name": network_name,
-                        # "Network ID": network_id,
                         "Appliance Status": uplinks_summary,
                         "VPN Status": vpn_status,
                     })
@@ -127,15 +146,13 @@ def main():
             network_df = pd.DataFrame(network_data)
             styled_df = network_df.style.applymap(color_status, subset=["Appliance Status", "VPN Status"])
             st.subheader("Network Overview")
-            st.dataframe(styled_df, use_container_width=True, height=458)  # Set a fixed height to avoid scrolling
+            st.dataframe(styled_df, use_container_width=True, height=458)
 
         # Devices in Network Page
         elif page == "Devices in Network":
-            # Let user select a network to view devices
             selected_network_name = st.sidebar.selectbox("Select Network", [network['name'] for network in networks])
             selected_network_id = next(network['id'] for network in networks if network['name'] == selected_network_name)
 
-            # Fetch and display devices in selected network
             devices = dashboard.networks.getNetworkDevices(selected_network_id)
             device_data = [{"Device Name": dev.get('name', 'N/A'), "MAC": dev.get('mac', 'N/A'), "Serial": dev.get('serial', 'N/A'), "Status": dev.get('status', 'N/A')} for dev in devices]
 
