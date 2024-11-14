@@ -38,9 +38,7 @@ st.markdown(
         background-color: #1f1f2e;
     }
     .centered-container {
-        display: flex;
-        justify-content: center;
-        padding-top: 2rem;
+        display: flex; justify-content: center; padding-top: 2rem;
     }
     </style>
     """,
@@ -56,9 +54,13 @@ def color_status(val):
     )
     return color
 
+# Function to apply a light grey background to the device count columns
+def light_grey_background(val):
+    return 'background-color: lightgrey; color: black;'
+
 # Function to display color-coded bars for status counts
 def display_status_counts(status_counts):
-    # st.write("### Devices Status in Network")
+    st.write("### Devices Statuses")
     colors = {
         "online": "#4CAF50",
         "offline": "#FF5252",
@@ -76,9 +78,6 @@ def display_status_counts(status_counts):
         </div>
         """
 
-    colour_bars(status_counts, colors, colored_bar)
-
-def colour_bars(status_counts, colors, colored_bar):
     st.markdown(
         colored_bar("Online", status_counts.get('online', 0), colors['online']),
         unsafe_allow_html=True
@@ -101,13 +100,11 @@ def main():
         st.session_state['countdown'] = REFRESH_INTERVAL
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
-    if 'previous_statuses' not in st.session_state:
-        st.session_state['previous_statuses'] = {}
 
     st.sidebar.title("Meraki Networks and Device Status")
     
     # Page navigation in the sidebar
-    page = st.sidebar.radio("Navigate", ["Networks Overview", "Device Status"])
+    page = st.sidebar.radio("Navigate", ["Network Overview", "Device Status"])
 
     if not st.session_state['logged_in']:
         api_key = st.sidebar.text_input("Enter your Meraki API Key", type="password")
@@ -134,8 +131,14 @@ def main():
         networks = dashboard.organizations.getOrganizationNetworks(org_id)
         excluded_network_names = ["UK transfer", "Metdist ISL-S", "Metdist ISL-Borealis", "Metdist ISL-A"]
 
-        if page == "Networks Overview":
+        if page == "Network Overview":
+            if 'previous_statuses' in st.session_state:
+                del st.session_state['previous_statuses']
+                
             network_data = []
+            all_devices = dashboard.organizations.getOrganizationDevicesStatuses(org_id)
+            devices_df = pd.DataFrame(all_devices)
+
             for network in networks:
                 if network['name'] not in excluded_network_names:
                     network_id = network['id']
@@ -150,30 +153,26 @@ def main():
                     vpn_for_network = next((vpn for vpn in vpn_statuses if vpn['networkId'] == network_id), None)
                     vpn_status = vpn_for_network['deviceStatus'] if vpn_for_network else "N/A"
 
-                    prev_status = st.session_state['previous_statuses'].get(network_name, {})
-                    prev_appliance_status = prev_status.get("Appliance Status", None)
-                    prev_vpn_status = prev_status.get("VPN Status", None)
-
-                    if prev_appliance_status and prev_appliance_status != uplinks_summary:
-                        st.warning(f"Appliance status for '{network_name}' changed from '{prev_appliance_status}' to '{uplinks_summary}'")
-                    if prev_vpn_status and prev_vpn_status != vpn_status:
-                        st.warning(f"VPN status for '{network_name}' changed from '{prev_vpn_status}' to '{vpn_status}'")
-
-                    st.session_state['previous_statuses'][network_name] = {
-                        "Appliance Status": uplinks_summary,
-                        "VPN Status": vpn_status,
-                    }
+                    devices_in_network = devices_df[devices_df['networkId'] == network_id]
+                    online_count = devices_in_network[devices_in_network['status'] == 'online'].shape[0]
+                    offline_count = devices_in_network[devices_in_network['status'] == 'offline'].shape[0]
+                    alerting_count = devices_in_network[devices_in_network['status'] == 'alerting'].shape[0]
+                    dormant_count = devices_in_network[devices_in_network['status'] == 'dormant'].shape[0]
 
                     network_data.append({
                         "Network Name": network_name,
                         "Appliance Status": uplinks_summary,
                         "VPN Status": vpn_status,
+                        "Online Devices": online_count,
+                        "Offline Devices": offline_count,
+                        "Alerting Devices": alerting_count,
+                        "Dormant Devices": dormant_count,
                     })
 
             network_df = pd.DataFrame(network_data)
             styled_df = network_df.style.applymap(color_status, subset=["Appliance Status", "VPN Status"])
-            st.subheader("Networks Overview")
-            st.write("")
+            styled_df = styled_df.applymap(light_grey_background, subset=["Online Devices", "Offline Devices", "Alerting Devices", "Dormant Devices"])
+            st.subheader("Network Overview")
             st.dataframe(styled_df, use_container_width=True, height=458)
 
         elif page == "Device Status":
@@ -189,17 +188,14 @@ def main():
             for network_id, devices in devices.groupby('networkId'):
                 if network_id == selected_network_id:
                     styled_devices = devices[['name', 'mac', 'productType', 'lastReportedAt', 'lanIp', 'status']].style.applymap(coloured_status, subset=['status'])
-                    network_devs_statuses = devices['status'].value_counts()                    
-                    st.write("")
-                    st.write("")
-                    st.write("")
-                    st.write(f"### Devices Status in {selected_network_name} Network")
-                    st.write("")
+                    network_devs_statuses = devices['status'].value_counts()
+
                     st.write("")
                     st.write("")
                     display_status_counts(network_devs_statuses)
                     st.write("")
                     st.write("")
+
                     st.subheader(f"Devices in {selected_network_name} Network")
                     st.markdown('<div class="centered-container">', unsafe_allow_html=True)
                     st.write(styled_devices.to_html(escape=False), unsafe_allow_html=True)
