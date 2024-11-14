@@ -178,18 +178,22 @@ def main():
                         """
 
                     # Display each status with a colored bar
+                    st.write("Online : ")
                     st.markdown(
                         colored_bar("Online", status_counts.get('online', 0), colors['online']),
                         unsafe_allow_html=True
                     )
+                    st.write("Offline : ")
                     st.markdown(
                         colored_bar("Offline", status_counts.get('offline', 0), colors['offline']),
                         unsafe_allow_html=True
                     )
+                    st.write("Alerting : ")
                     st.markdown(
                         colored_bar("Alerting", status_counts.get('alerting', 0), colors['alerting']),
                         unsafe_allow_html=True
                     )
+                    st.write("Dormant : ")
                     st.markdown(
                         colored_bar("Dormant", status_counts.get('dormant', 0), colors['dormant']),
                         unsafe_allow_html=True
@@ -218,18 +222,22 @@ def main():
 
                 # Display the count of devices in each status
                 st.write("### All Devices Statuses in Organization")
+                st.write("Online : ")
                 st.markdown(
                     colored_bar("Online", status_counts.get('online', 0), colors['online']),
                     unsafe_allow_html=True
                 )
+                st.write("Offline : ")
                 st.markdown(
                     colored_bar("Offline", status_counts.get('offline', 0), colors['offline']),
                     unsafe_allow_html=True
                 )
+                st.write("Alerting : ")
                 st.markdown(
                     colored_bar("Alerting", status_counts.get('alerting', 0), colors['alerting']),
                     unsafe_allow_html=True
                 )
+                st.write("Dormant : ")
                 st.markdown(
                     colored_bar("Dormant", status_counts.get('dormant', 0), colors['dormant']),
                     unsafe_allow_html=True
