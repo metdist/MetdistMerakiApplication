@@ -45,12 +45,13 @@ st.markdown(
 
 # Function to apply colors to the status cells based on value
 def color_status(val):
-    color = (
-        'background-color: green; color: white;'
-        if val in ["active", "active, ready", "online"]
-        else 'background-color: red; color: black;'
-    )
-    return color
+    if val in ["active", "active, ready", "online"]:
+        return 'background-color: green; color: white;'
+    elif val == 0:
+        return 'background-color: #F3E4CC; color: black;'
+    else:
+        return 'background-color: red; color: black;'
+
 
 # Function to apply a light grey background to the device count columns
 def light_grey_background(val):
@@ -82,11 +83,11 @@ def display_status_counts(status_counts):
             "dormant": "#9E9E9E"
     }
 
-    def colored_bar(label, count, color):
+    def colored_bar(label, count, color_status):
         return f"""
         <div style="display: flex; align-items: center; margin-bottom: 4px;">
             <div style="width: 80px; font-weight: bold; color: black;">{label}:</div>
-            <div style="flex-grow: 1; height: 24px; background-color: {color}; width: {count*10}px; margin-left: 8px; border-radius: 4px;">
+            <div style="flex-grow: 1; height: 24px; background-color: {color_status}; width: {count*10}px; margin-left: 8px; border-radius: 4px;">
                 <span style="padding-left: 8px; color: black;">{count}</span>
             </div>
         </div>
@@ -108,6 +109,10 @@ def display_status_counts(status_counts):
         colored_bar("Dormant", status_counts.get('dormant', 0), colors['dormant']),
         unsafe_allow_html=True
     )
+
+def apply_styling(val):
+        return 'background-color: red; color: white;' if val > 0 else ''
+
 
 def main():
     if 'countdown' not in st.session_state:
@@ -147,6 +152,7 @@ def main():
                 del st.session_state['previous_statuses']
                 
             network_data = []
+            network_data_offline= []
             all_devices = dashboard.organizations.getOrganizationDevicesStatuses(org_id)
             devices_df = pd.DataFrame(all_devices)
 
@@ -181,15 +187,16 @@ def main():
                     })
 
             network_df = pd.DataFrame(network_data)
+
             # Remove the index by resetting it and then applying the style
-            styled_df = network_df.style.applymap(color_status, subset=["Appliance Status", "VPN Status"])
+            styled_df = network_df.style.applymap(color_status, subset=["Appliance Status", "VPN Status","Offline Devices"])
             # styled_df = styled_df.applymap(light_grey_background)
             
             
             st.subheader("Network Overview")
             # st.dataframe(styled_df, use_container_width=True, height=458)
             st.write(styled_df.to_html(escape=False), unsafe_allow_html=True, use_container_width=True, height=458)
-
+            
             all_org_devices = dashboard.organizations.getOrganizationDevicesStatuses(org_id)
             org_devices = pd.DataFrame(all_org_devices)
 
