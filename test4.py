@@ -1,79 +1,136 @@
 import time
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import streamlit as st
 import pandas as pd
 from meraki import DashboardAPI
 from meraki.exceptions import APIKeyError, APIError
-
-# Set the page to use the full width and a dark theme
+# Set the page to use the full width
 st.set_page_config(page_title="Meraki Dashboard", page_icon="🌐", layout="wide")
 
 # Define a refresh interval in seconds (5 minutes)
 REFRESH_INTERVAL = 2 * 60  # 5 minutes in seconds
+SMTP_SERVER = "smtp.metdist.com"  # Update for your SMTP provider
+SMTP_PORT = 587
+EMAIL_USER = "ppieri@metdist.com"  # Sender email address
+EMAIL_PASSWORD = "PierisMetdist/2024"  # Sender email password
 
-# Custom CSS for styling
+st.sidebar.title("Meraki Networks and Device Status")
+
+page = st.sidebar.radio("Choose page to monitor : ", ["Network Overview", "Device Status"])
+
+# Apply CSS for the page and sidebar background color
 st.markdown(
     """
     <style>
-    .reportview-container {
-        background-color: #000000;
+    /* Main page background color */
+    .appview-container {
+        background-color: #F3E4CC; /* Light brown */
     }
-    .main .block-container {
-        background-color: #000000;
-        color: #ffffff;
-        padding-top: 2rem;
-        padding-right: 2rem;  
-        padding-left: 2rem;
+    
+    /* Sidebar background color */
+    [data-testid="stSidebar"] {
+        background-color: #9B8460; /* Slightly lighter brown */
     }
-    .css-1aumxhk {
-        background-color: #1f1f2e;
-        color: #cddc39;
+
+    /* Sidebar and main content text color */
+    .main, .sidebar-content {
+        color: black; /* Darker text color for readability */
     }
-    .css-10trblm {
-        color: #ffffff;
-    }
-    .css-15zrgzn {
-        color: #cddc39;
-    }
-    .css-1d391kg {
-        background-color: #1f1f2e;
-    }
-    .centered-container {
-        display: flex; justify-content: center; padding-top: 2rem;
+
+    /* Column titles color */
+    .dataframe thead th {
+        background-color: #C7AE89; /* Light brown */
+        color: black; /* Title text color */
     }
     </style>
     """,
-    unsafe_allow_html=True,
+    unsafe_allow_html=True
 )
+
+# Function to send email notifications
+def send_email(subject, body, recipient="it@metdist.com"):
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_USER
+        msg['To'] = recipient
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'plain'))
+
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(EMAIL_USER, EMAIL_PASSWORD)
+        server.sendmail(EMAIL_USER, recipient, msg.as_string())
+        server.quit()
+        st.sidebar.success("Email sent successfully!")
+    except Exception as e:
+        st.sidebar.error(f"Failed to send email: {e}")
+
+# Function to monitor network status changes
+def monitor_network_changes(current_statuses):
+    previous_statuses = st.session_state.get('previous_statuses', {})
+
+    changes = []
+    for network, status in current_statuses.items():
+        if network in previous_statuses and previous_statuses[network] != status:
+            changes.append((network, previous_statuses[network], status))
+    
+    st.session_state['previous_statuses'] = current_statuses
+
+    if changes:
+        email_body = "Network Status Changes Detected:\n\n"
+        for change in changes:
+            network, old_status, new_status = change
+            email_body += f"Network: {network}\nOld Status: {old_status}\n changed to New Status: {new_status}\n\n"
+
+        send_email("Meraki Network Status Changes", email_body)
 
 # Function to apply colors to the status cells based on value
 def color_status(val):
     color = (
         'background-color: green; color: white;'
-        if val == "active" or val == "active, ready" or val == "online"
-        else 'background-color: red; color: white;'
+        if val in ["active", "active, ready", "online"]
+        else 'background-color: red; color: black;'
     )
     return color
 
 # Function to apply a light grey background to the device count columns
 def light_grey_background(val):
-    return 'background-color: lightgrey; color: black;'
+    return 'background-color: #F3E4CC; color: black;'
 
 # Function to display color-coded bars for status counts
 def display_status_counts(status_counts):
-    st.write("### Devices Statuses")
-    colors = {
-        "online": "#4CAF50",
-        "offline": "#FF5252",
-        "alerting": "#FFC107",
-        "dormant": "#9E9E9E"
+    if page=="Network Overview":
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("### Organization Devices Statuses")
+        st.write("The below stats represent all the devices that are under the Metdist Organization.")
+        colors = {
+            "online": "#4CAF50",
+            "offline": "#FF5252",
+            "alerting": "#FFC107",
+            "dormant": "#9E9E9E"
+        }
+    else : 
+        st.write("")
+        st.write("### Network Devices Statuses")
+        st.write("The below stats represent all the devices that are under the selected network.")
+        st.write("")
+        colors = {
+            "online": "#4CAF50",
+            "offline": "#FF5252",
+            "alerting": "#FFC107",
+            "dormant": "#9E9E9E"
     }
 
     def colored_bar(label, count, color):
         return f"""
         <div style="display: flex; align-items: center; margin-bottom: 4px;">
-            <div style="width: 80px; font-weight: bold; color: #FFFFFF;">{label}:</div>
+            <div style="width: 80px; font-weight: bold; color: black;">{label}:</div>
             <div style="flex-grow: 1; height: 24px; background-color: {color}; width: {count*10}px; margin-left: 8px; border-radius: 4px;">
-                <span style="padding-left: 8px; color: white;">{count}</span>
+                <span style="padding-left: 8px; color: black;">{count}</span>
             </div>
         </div>
         """
@@ -101,10 +158,7 @@ def main():
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
 
-    st.sidebar.title("Meraki Networks and Device Status")
     
-    # Page navigation in the sidebar
-    page = st.sidebar.radio("Navigate", ["Network Overview", "Device Status"])
 
     if not st.session_state['logged_in']:
         api_key = st.sidebar.text_input("Enter your Meraki API Key", type="password")
@@ -136,6 +190,7 @@ def main():
                 del st.session_state['previous_statuses']
                 
             network_data = []
+            current_statuses = {}
             all_devices = dashboard.organizations.getOrganizationDevicesStatuses(org_id)
             devices_df = pd.DataFrame(all_devices)
 
@@ -159,6 +214,7 @@ def main():
                     alerting_count = devices_in_network[devices_in_network['status'] == 'alerting'].shape[0]
                     dormant_count = devices_in_network[devices_in_network['status'] == 'dormant'].shape[0]
 
+                    current_statuses[network_name] = uplinks_summary
                     network_data.append({
                         "Network Name": network_name,
                         "Appliance Status": uplinks_summary,
@@ -168,12 +224,29 @@ def main():
                         "Alerting Devices": alerting_count,
                         "Dormant Devices": dormant_count,
                     })
+            # Check for changes and notify
+            monitor_network_changes(current_statuses)
 
             network_df = pd.DataFrame(network_data)
+            # Remove the index by resetting it and then applying the style
             styled_df = network_df.style.applymap(color_status, subset=["Appliance Status", "VPN Status"])
-            styled_df = styled_df.applymap(light_grey_background, subset=["Online Devices", "Offline Devices", "Alerting Devices", "Dormant Devices"])
+            # styled_df = styled_df.applymap(light_grey_background)
+            
+            
             st.subheader("Network Overview")
-            st.dataframe(styled_df, use_container_width=True, height=458)
+            # st.dataframe(styled_df, use_container_width=True, height=458)
+            st.write(styled_df.to_html(escape=False), unsafe_allow_html=True, use_container_width=True, height=458)
+
+            all_org_devices = dashboard.organizations.getOrganizationDevicesStatuses(org_id)
+            org_devices = pd.DataFrame(all_org_devices)
+
+            # code to display the bar s for the organization devices statuses
+            network_devs_statuses = org_devices['status'].value_counts()
+            st.write("")
+            display_status_counts(network_devs_statuses)
+
+
+
 
         elif page == "Device Status":
             selected_network_name = st.sidebar.selectbox("Select Network", [network['name'] for network in networks])
@@ -183,7 +256,7 @@ def main():
             devices = pd.DataFrame(all_devices)
             
             def coloured_status(value):
-                return 'background-color: green; color: white;' if value == "online" else 'background-color: grey; color: white;' if value == "dormant" else 'background-color: orange; color: white;' if value=="alerting" else 'background-color: red; color: white;'
+                return 'background-color: green; color: black;' if value == "online" else 'background-color: grey; color: black;' if value == "dormant" else 'background-color: orange; color: black;' if value=="alerting" else 'background-color: red; color: black;'
 
             for network_id, devices in devices.groupby('networkId'):
                 if network_id == selected_network_id:
@@ -191,11 +264,12 @@ def main():
                     network_devs_statuses = devices['status'].value_counts()
 
                     st.write("")
-                    st.write("")
                     display_status_counts(network_devs_statuses)
                     st.write("")
                     st.write("")
-
+                    st.write("")
+                    st.write("")
+                    st.write("")
                     st.subheader(f"Devices in {selected_network_name} Network")
                     st.markdown('<div class="centered-container">', unsafe_allow_html=True)
                     st.write(styled_devices.to_html(escape=False), unsafe_allow_html=True)
