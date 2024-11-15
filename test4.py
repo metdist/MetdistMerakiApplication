@@ -1,21 +1,15 @@
 import time
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 import streamlit as st
 import pandas as pd
 from meraki import DashboardAPI
 from meraki.exceptions import APIKeyError, APIError
+
 # Set the page to use the full width
 st.set_page_config(page_title="Meraki Dashboard", page_icon="🌐", layout="wide")
 
+
 # Define a refresh interval in seconds (5 minutes)
 REFRESH_INTERVAL = 2 * 60  # 5 minutes in seconds
-SMTP_SERVER = "smtp.metdist.com"  # Update for your SMTP provider
-SMTP_PORT = 587
-EMAIL_USER = "ppieri@metdist.com"  # Sender email address
-EMAIL_PASSWORD = "PierisMetdist/2024"  # Sender email password
-
 st.sidebar.title("Meraki Networks and Device Status")
 
 page = st.sidebar.radio("Choose page to monitor : ", ["Network Overview", "Device Status"])
@@ -48,43 +42,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# Function to send email notifications
-def send_email(subject, body, recipient="it@metdist.com"):
-    try:
-        msg = MIMEMultipart()
-        msg['From'] = EMAIL_USER
-        msg['To'] = recipient
-        msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'plain'))
-
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
-        server.login(EMAIL_USER, EMAIL_PASSWORD)
-        server.sendmail(EMAIL_USER, recipient, msg.as_string())
-        server.quit()
-        st.sidebar.success("Email sent successfully!")
-    except Exception as e:
-        st.sidebar.error(f"Failed to send email: {e}")
-
-# Function to monitor network status changes
-def monitor_network_changes(current_statuses):
-    previous_statuses = st.session_state.get('previous_statuses', {})
-
-    changes = []
-    for network, status in current_statuses.items():
-        if network in previous_statuses and previous_statuses[network] != status:
-            changes.append((network, previous_statuses[network], status))
-    
-    st.session_state['previous_statuses'] = current_statuses
-
-    if changes:
-        email_body = "Network Status Changes Detected:\n\n"
-        for change in changes:
-            network, old_status, new_status = change
-            email_body += f"Network: {network}\nOld Status: {old_status}\n changed to New Status: {new_status}\n\n"
-
-        send_email("Meraki Network Status Changes", email_body)
 
 # Function to apply colors to the status cells based on value
 def color_status(val):
@@ -190,7 +147,6 @@ def main():
                 del st.session_state['previous_statuses']
                 
             network_data = []
-            current_statuses = {}
             all_devices = dashboard.organizations.getOrganizationDevicesStatuses(org_id)
             devices_df = pd.DataFrame(all_devices)
 
@@ -214,7 +170,6 @@ def main():
                     alerting_count = devices_in_network[devices_in_network['status'] == 'alerting'].shape[0]
                     dormant_count = devices_in_network[devices_in_network['status'] == 'dormant'].shape[0]
 
-                    current_statuses[network_name] = uplinks_summary
                     network_data.append({
                         "Network Name": network_name,
                         "Appliance Status": uplinks_summary,
@@ -224,8 +179,6 @@ def main():
                         "Alerting Devices": alerting_count,
                         "Dormant Devices": dormant_count,
                     })
-            # Check for changes and notify
-            monitor_network_changes(current_statuses)
 
             network_df = pd.DataFrame(network_data)
             # Remove the index by resetting it and then applying the style
@@ -244,9 +197,6 @@ def main():
             network_devs_statuses = org_devices['status'].value_counts()
             st.write("")
             display_status_counts(network_devs_statuses)
-
-
-
 
         elif page == "Device Status":
             selected_network_name = st.sidebar.selectbox("Select Network", [network['name'] for network in networks])
