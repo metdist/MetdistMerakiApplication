@@ -110,10 +110,6 @@ def display_status_counts(status_counts):
         unsafe_allow_html=True
     )
 
-def apply_styling(val):
-        return 'background-color: red; color: white;' if val > 0 else ''
-
-
 def main():
     if 'countdown' not in st.session_state:
         st.session_state['countdown'] = REFRESH_INTERVAL
@@ -152,7 +148,6 @@ def main():
                 del st.session_state['previous_statuses']
                 
             network_data = []
-            network_data_offline= []
             all_devices = dashboard.organizations.getOrganizationDevicesStatuses(org_id)
             devices_df = pd.DataFrame(all_devices)
 
@@ -206,7 +201,8 @@ def main():
             display_status_counts(network_devs_statuses)
 
         elif page == "Device Status":
-            selected_network_name = st.sidebar.selectbox("Select Network", [network['name'] for network in networks])
+            
+            selected_network_name = st.selectbox("Select Network", [network['name'] for network in networks])
             selected_network_id = next(network['id'] for network in networks if network['name'] == selected_network_name)
 
             all_devices = dashboard.organizations.getOrganizationDevicesStatuses(org_id)
